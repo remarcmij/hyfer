@@ -38,49 +38,22 @@ class UsersPage extends React.Component {
     category: 'active',
     filter: '',
     isSyncing: false,
+    loaded: false,
   }
 
   componentDidMount = async () => {
     await this.props.users.loadUsers();
-  };
-
-  renderUsers() {
-    let { users } = this.props.users;
-    const { category, filter } = this.state;
-
-    switch (category) {
-      case 'active':
-        users = users.filter(user => user.archived === 0 || user.role === 'teacher');
-        break;
-      case 'teachers':
-        users = users.filter(user => user.role === 'teacher');
-        break;
-    }
-
-    if (filter !== '') {
-      const regex = new RegExp(filter, 'i');
-      users = users.filter((user) => {
-        const { username, full_name } = user;
-        const email = user.email || '';
-        const groupName = user.group_name || '';
-        return username.match(regex) || full_name.match(regex) || email.match(regex) || groupName.match(regex);
-      });
-    }
-
-    return users.map(user => (
-      <UserCard
-        key={user.id}
-        user={user}
-      />
-    ));
+    this.setState({ loaded: true });
   }
 
   handleCategoryChange = (e) => {
-    this.setState({ category: e.target.value });
+    const category = e.target.value;
+    this.setState({ category });
   }
 
   handleFilterChange = (e) => {
-    this.setState({ filter: e.target.value.trim() });
+    const filter = e.target.value.trim();
+    this.setState({ filter });
   }
 
   handleKeyUp = (e) => {
@@ -106,7 +79,33 @@ class UsersPage extends React.Component {
   render() {
     const { classes } = this.props;
     const { isTeacher } = this.props.currentUser;
-    const { showAdmin } = this.props.ui;
+    const { showAdmin, isMobile } = this.props.ui;
+    const { loaded, category, filter } = this.state;
+
+    if (!loaded) {
+      return null;
+    }
+
+    let { users } = this.props.users;
+
+    switch (category) {
+      case 'active':
+        users = users.filter(user => user.archived === 0 || user.role === 'teacher');
+        break;
+      case 'teachers':
+        users = users.filter(user => user.role === 'teacher');
+        break;
+    }
+
+    if (filter !== '') {
+      const regex = new RegExp(filter, 'i');
+      users = users.filter((user) => {
+        const { username, full_name } = user;
+        const email = user.email || '';
+        const groupName = user.group_name || '';
+        return username.match(regex) || full_name.match(regex) || email.match(regex) || groupName.match(regex);
+      });
+    }
 
     return (
       <div>
@@ -127,9 +126,10 @@ class UsersPage extends React.Component {
               value={this.state.filter}
               onChange={this.handleFilterChange}
               onKeyUp={this.handleKeyUp}
-              autoFocus
+              autoFocus={!isMobile}
             />
             <span className={classes.filler} />
+            <FormLabel classes={{ root: classes.formLabel }}>{users.length} users</FormLabel>
             {showAdmin && isTeacher && (
               <Button onClick={this.handleSyncClick} color="secondary" disabled={this.state.isSyncing}>
                 Sync users with Github
@@ -139,7 +139,7 @@ class UsersPage extends React.Component {
         </Paper>
 
         <div className={classes.container}>
-          {this.renderUsers()}
+          {users.map(user => <UserCard key={user.id} user={user} />)}
         </div>
       </div >
     );

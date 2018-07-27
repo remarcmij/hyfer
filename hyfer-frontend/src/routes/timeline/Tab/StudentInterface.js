@@ -65,12 +65,12 @@ class StudentInterface extends React.Component {
             <Tab label={
               <Badge className={classes.padding} color="primary" badgeContent={teachers.length}>
                 Teachers
-                </Badge>
+              </Badge>
             } />
             <Tab label={
               <Badge className={classes.padding} color="primary" badgeContent={students.length}>
                 Students
-                </Badge>
+              </Badge>
             } />
           </Tabs>
         </Paper>
