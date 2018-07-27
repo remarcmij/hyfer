@@ -49,6 +49,7 @@ const routes = {
   ],
   student: [
     { label: 'Timeline', path: 'timeline' },
+    { label: 'Users', path: 'users' },
     { label: 'Homework', path: 'homework' },
     { label: 'About', path: 'about' },
   ],
@@ -62,7 +63,7 @@ const routes = {
   ],
 };
 
-@inject('currentUser')
+@inject('currentUser', 'ui')
 @withRouter
 @observer
 class MainAppBar extends Component {
@@ -118,17 +119,19 @@ class MainAppBar extends Component {
     this.setState({ dialogOpen: false });
   };
 
+  toggleShowAdmin = () => {
+    this.props.ui.toggleShowAdmin();
+    setTimeout(this.handleMenuClose, 250);
+  }
+
   render() {
     const { classes } = this.props;
-    const { isLoggedIn, isStudent, isTeacher, userName, avatarUrl } = this.props.currentUser;
+    const { isLoggedIn, isStudentOrTeacher, isTeacher, userName, avatarUrl } = this.props.currentUser;
+    const { showAdmin } = this.props.ui;
     const { value, anchorEl } = this.state;
 
-    if (isLoggedIn) {
-      if (isTeacher) {
-        this.role = 'teacher';
-      } else if (isStudent) {
-        this.role = 'student';
-      }
+    if (isStudentOrTeacher) {
+      this.role = (isTeacher && showAdmin) ? 'teacher' : 'student';
     }
 
     return (
@@ -164,11 +167,12 @@ class MainAppBar extends Component {
               onClose={this.handleMenuClose}
             >
               <MenuItem onClick={this.handleSignOut}>Sign out</MenuItem>
-              <MenuItem onClick={this.handleDialogOpen}>Profile</MenuItem>
+              <MenuItem onClick={this.handleDialogOpen}>Edit Profile</MenuItem>
+              {isTeacher && <MenuItem onClick={this.toggleShowAdmin}>{showAdmin ? 'Hide' : 'Show'} Admin</MenuItem>}
             </Menu>
           </Toolbar>
         </AppBar>
-        {(isStudent || isTeacher) && (
+        {(isStudentOrTeacher) && (
           <ProfileEditDialog
             profile={this.props.currentUser.profile}
             open={this.state.dialogOpen}
@@ -185,6 +189,7 @@ MainAppBar.wrappedComponent.propTypes = {
   classes: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
   history: PropTypes.object,
+  ui: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(MainAppBar);

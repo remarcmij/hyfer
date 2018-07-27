@@ -4,10 +4,10 @@ import Grid from '@material-ui/core/Grid';
 
 export default function GridContainer(props) {
 
-  const { children, ...rest } = props;
+  const { children, ...other } = props;
 
   return (
-    <div {...rest}>
+    <div {...other}>
       <Grid container justify="center" spacing={24}>
         <Grid item xs={12} sm={8} lg={6} xl={4}>
           {children}

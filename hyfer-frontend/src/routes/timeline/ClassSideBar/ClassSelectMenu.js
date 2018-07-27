@@ -19,7 +19,7 @@ const styles = (theme) => ({
   },
 });
 
-@inject('timeline', 'currentUser', 'currentModule')
+@inject('timeline', 'currentUser', 'currentModule', 'ui')
 @observer
 class ClassSelectMenu extends React.Component {
 
@@ -92,6 +92,8 @@ class ClassSelectMenu extends React.Component {
 
   render() {
     const { classes, currentUser } = this.props;
+    const { showAdmin } = this.props.ui;
+
     return (
       <React.Fragment>
         <Select
@@ -106,13 +108,13 @@ class ClassSelectMenu extends React.Component {
           {this.renderMenuItems()}
           <Divider />
           <MenuItem value='archived' classes={{ root: classes.menuItem }}>Archived</MenuItem>
-          {currentUser.isTeacher && <Divider />}
-          {currentUser.isTeacher && (
+          {showAdmin && currentUser.isTeacher && <Divider />}
+          {showAdmin && currentUser.isTeacher && (
             <MenuItem value="add" classes={{ root: classes.menuItem }}>Add class</MenuItem>
           )}
         </Select>
 
-        {currentUser.isTeacher && (
+        {showAdmin && currentUser.isTeacher && (
           <StartDateDialog
             open={this.state.startDateDialogOpen}
             classNumber={this.nextClassNumber}
@@ -139,6 +141,7 @@ ClassSelectMenu.wrappedComponent.propTypes = {
   currentModule: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
   timeline: PropTypes.object.isRequired,
+  ui: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(ClassSelectMenu);

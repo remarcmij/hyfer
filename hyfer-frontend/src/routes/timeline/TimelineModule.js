@@ -44,7 +44,7 @@ const styles = (theme) => ({
   },
 });
 
-@inject('currentModule', 'currentUser', 'users', 'timeline')
+@inject('currentModule', 'currentUser', 'users', 'timeline', 'ui')
 @observer
 class TimelineModule extends React.Component {
   state = {
@@ -84,6 +84,8 @@ class TimelineModule extends React.Component {
     const { selectedModule } = this.props.currentModule;
     const selected = selectedModule && selectedModule.running_module_id === running_module_id;
 
+    const { showAdmin } = this.props.ui;
+
     return (
       <div className={classes.root}>
         <Paper elevation={2}
@@ -99,7 +101,7 @@ class TimelineModule extends React.Component {
           >
             {module_name}
           </Typography>
-          {currentUser.isTeacher && archived === 0 && (
+          {showAdmin && currentUser.isTeacher && archived === 0 && (
             <React.Fragment>
               <IconButton
                 onClick={this.openMenu}
@@ -128,6 +130,7 @@ TimelineModule.wrappedComponent.propTypes = {
   item: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   timeline: PropTypes.object.isRequired,
+  ui: PropTypes.object.isRequired,
   users: PropTypes.object.isRequired,
 };
 

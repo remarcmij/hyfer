@@ -7,6 +7,7 @@ import ModulesStore from './ModulesStore';
 import TimeLineStore from './TimeLineStore';
 import NotificationStore from './NotificationStore';
 import UsersStore from './UsersStore';
+import UIStore from './UIStore';
 
 configure({ enforceActions: true });
 
@@ -20,4 +21,5 @@ export default {
   timeline: new TimeLineStore(),
   notification: new NotificationStore(),
   users: new UsersStore(),
+  ui: new UIStore(),
 };

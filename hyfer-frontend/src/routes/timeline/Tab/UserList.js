@@ -53,7 +53,7 @@ const styles = (theme) => ({
   },
 });
 
-@inject('currentModule', 'currentUser')
+@inject('currentModule')
 @observer
 class UserList extends React.Component {
 
@@ -121,7 +121,7 @@ class UserList extends React.Component {
   }
 
   render() {
-    const { classes, currentUser, currentModule, role } = this.props;
+    const { classes, currentModule, role } = this.props;
     const { selectedModule, group, students, teachers } = currentModule;
 
     let users = role === 'teacher' ? teachers : students;
@@ -142,7 +142,7 @@ class UserList extends React.Component {
         <div className={classes.container}>
           {this.renderUsers(role, users, this.state.selectedWeek)}
         </div>
-        {role === 'teacher' && selectedModule && currentUser.isTeacher &&
+        {role === 'teacher' && selectedModule &&
           <React.Fragment>
             <AddTeacherDialog
               open={this.state.isOpen}
@@ -179,7 +179,6 @@ class UserList extends React.Component {
 UserList.wrappedComponent.propTypes = {
   classes: PropTypes.object.isRequired,
   currentModule: PropTypes.object.isRequired,
-  currentUser: PropTypes.object.isRequired,
   role: PropTypes.string.isRequired,
   showAttendance: PropTypes.bool,
 };

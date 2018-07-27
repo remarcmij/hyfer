@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
 
-export default class UIStore {
+export default class NotificationStore {
 
   @observable
   notification = null;
