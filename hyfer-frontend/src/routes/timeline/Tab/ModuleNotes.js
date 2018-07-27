@@ -171,7 +171,7 @@ class ModuleNotes extends React.Component {
         {(isTeacher || user.group_id === group.id) && (
           <div className={classes.bottomButtonContainer}>
             <Tooltip title="Edit notes">
-              <Button variant="fab" color="primary" className={classes.fab} aria-label="Edit" onClick={this.setEditMode}>
+              <Button variant="fab" color="default" className={classes.fab} aria-label="Edit" onClick={this.setEditMode}>
                 <EditIcon />
               </Button>
             </Tooltip>

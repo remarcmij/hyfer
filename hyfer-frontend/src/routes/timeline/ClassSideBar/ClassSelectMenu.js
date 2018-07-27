@@ -51,8 +51,6 @@ class ClassSelectMenu extends React.Component {
     await this.props.timeline.fetchTimeline();
     if (groupName !== 'active') {
       await this.props.currentModule.getGroupsByGroupName(groupName);
-    } else {
-      await this.props.currentModule.clearSelectedModule();
     }
     this.props.timeline.notify(CLASS_SELECTION_CHANGED);
   }

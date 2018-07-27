@@ -28,7 +28,7 @@ const styles = (theme) => ({
     margin: theme.spacing.unit,
   },
   toolbarContainer: {
-    margin: theme.spacing.unit,
+    marginTop: theme.spacing.unit,
     width: '100%',
     display: 'flex',
     justifyContent: 'center',
