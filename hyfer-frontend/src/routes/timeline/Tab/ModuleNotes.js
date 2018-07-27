@@ -20,13 +20,21 @@ function standardHeader(selectedModule) {
   const { group_name, module_name, starting_date, ending_date, git_repo } = selectedModule;
   const classNumber = group_name.match(/\d+/)[0];
 
-  return `# ${module_name}
+  let header =
+    `# ${module_name}
   
 _Class ${classNumber}, ${starting_date.format('D MMMM YYYY')} – ${ending_date.format('D MMMM YYYY')}_
 
-[Visit Repository ](${HYF_GITHUB_URL}/${git_repo}) <i class="fab fa-github fa-lg"></i>
-
 `;
+
+  if (git_repo) {
+    header +=
+      `[Visit ${git_repo} Repository ](${HYF_GITHUB_URL}/${git_repo}) <i class="fab fa-github fa-lg"></i>
+
+ `;
+  }
+
+  return header;
 }
 
 const styles = theme => ({
