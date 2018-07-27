@@ -1,7 +1,8 @@
 
 .homeworkPage {
-    padding: 0vh 5vw;
+    padding: 56px 5vw 0 5vw;
     min-height: 400px;
+    font-family: Roboto, Arial, Helvetica, sans-serif;
 }
 
 .navBar {
