@@ -92,7 +92,7 @@ export default class HomeworkStore {
         .filter(group => group.archived === 0)
         .map(group => ({
           id: group.id,
-          name: group.group_name.replace(/ /g, '').toLowerCase(),
+          name: group.group_name,
           startDate: group.starting_date,
         }));
     });
@@ -166,7 +166,7 @@ export default class HomeworkStore {
       assignment_link,
       deadline,
     };
-    await sendData('POST', 'assignments', newHomework);
+    await sendData('POST', 'homework/assignments', newHomework);
     this.getHomework('assignments');
   };
 
@@ -191,7 +191,7 @@ export default class HomeworkStore {
       date,
     };
     await sendData('POST', 'homework/reviews', newReview);
-    this.getHomework('homework/reviews');
+    this.getHomework('reviews');
   };
 
   @action
@@ -201,7 +201,7 @@ export default class HomeworkStore {
       reviewer: assignedReviewer,
     };
     await sendData('PATCH', 'homework/addReviewer', body);
-    this.getHomework('homework/submissions');
+    this.getHomework('submissions');
   };
 
   @action

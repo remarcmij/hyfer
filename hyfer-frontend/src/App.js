@@ -7,7 +7,7 @@ import { withTheme } from '@material-ui/core/styles';
 import NotificationSnackbar from './components/NotificationSnackbar';
 import cookie from 'react-cookies';
 import AboutPage from './routes/about/AboutPage';
-import HomeworkPage from './routes//homework/HomeworkPage';
+// import HomeworkPage from './routes//homework/HomeworkPage';
 import MainAppBar from './components/MainAppBar';
 import ModulesPage from './routes//modules/ModulesPage';
 import TimelinePage from './routes/timeline/TimelinePage';
@@ -15,21 +15,22 @@ import TimelinePage from './routes/timeline/TimelinePage';
 import UsersPage from './routes//users/UsersPage';
 
 const PUBLIC_ROUTES = [
-  { exact: true, path: '/about', component: AboutPage },
   { exact: true, path: '/timeline', component: TimelinePage },
+  { exact: true, path: '/about', component: AboutPage },
 ];
 
 const ROUTES = {
   teacher: [
     { exact: true, path: '/modules', component: ModulesPage },
     { exact: true, path: '/users', component: UsersPage },
-    { exact: true, path: '/homework', component: HomeworkPage },
-    { exact: true, path: '/homework/:classNumber', component: HomeworkPage },
+    // { exact: true, path: '/homework', component: HomeworkPage },
+    // { exact: true, path: '/homework/:classNumber', component: HomeworkPage },
     // { exact: true, path: '/TrainTicket', component: TrainTicketPage },
   ],
   student: [
-    { exact: true, path: '/homework', component: HomeworkPage },
-    { exact: true, path: '/homework/:classNumber', component: HomeworkPage },
+    { exact: true, path: '/users', component: UsersPage },
+    // { exact: true, path: '/homework', component: HomeworkPage },
+    // { exact: true, path: '/homework/:classNumber', component: HomeworkPage },
   ],
   guest: [
   ],

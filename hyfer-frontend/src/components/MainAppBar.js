@@ -50,14 +50,14 @@ const routes = {
   student: [
     { label: 'Timeline', path: '/timeline' },
     { label: 'Users', path: '/users' },
-    { label: 'Homework', path: '/homework' },
+    // { label: 'Homework', path: '/homework' },
     { label: 'About', path: '/about' },
   ],
   teacher: [
     { label: 'Timeline', path: '/timeline' },
     { label: 'Modules', path: '/modules' },
     { label: 'Users', path: '/users' },
-    { label: 'Homework', path: '/homework' },
+    // { label: 'Homework', path: '/homework' },
     // { label: 'Train ticket', path: 'TrainTicket' },
     { label: 'About', path: '/about' },
   ],
