@@ -62,7 +62,8 @@ class UsersPage extends React.Component {
       users = users.filter((user) => {
         const { username, full_name } = user;
         const email = user.email || '';
-        return username.match(regex) || full_name.match(regex) || email.match(regex);
+        const groupName = user.group_name || '';
+        return username.match(regex) || full_name.match(regex) || email.match(regex) || groupName.match(regex);
       });
     }
 
@@ -80,6 +81,13 @@ class UsersPage extends React.Component {
 
   handleFilterChange = (e) => {
     this.setState({ filter: e.target.value.trim() });
+  }
+
+  handleKeyUp = (e) => {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      this.setState({ filter: '' });
+    }
   }
 
   handleSyncClick = async () => {
@@ -115,7 +123,12 @@ class UsersPage extends React.Component {
               <MenuItem value='teachers'>Teachers</MenuItem>
             </Select>
             <FormLabel classes={{ root: classes.formLabel }}>Filter:</FormLabel>
-            <TextField value={this.state.filter} onChange={this.handleFilterChange} />
+            <TextField
+              value={this.state.filter}
+              onChange={this.handleFilterChange}
+              onKeyUp={this.handleKeyUp}
+              autoFocus
+            />
             <span className={classes.filler} />
             {showAdmin && isTeacher && (
               <Button onClick={this.handleSyncClick} color="secondary" disabled={this.state.isSyncing}>
