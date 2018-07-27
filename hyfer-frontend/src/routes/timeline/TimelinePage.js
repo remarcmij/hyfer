@@ -36,6 +36,8 @@ const styles = (theme) => ({
 @observer
 class TimelinePage extends React.Component {
 
+  classSelectionChanged = false;
+
   state = {
     todayMarkerRef: null,
     initialized: false,
@@ -58,10 +60,17 @@ class TimelinePage extends React.Component {
     }
 
     this.props.timeline.onNotify(CLASS_SELECTION_CHANGED, () => {
-      this.onTodayClick();
+      this.classSelectionChanged = true;
     });
 
     this.onTodayClick();
+  }
+
+  componentDidUpdate() {
+    if (this.classSelectionChanged) {
+      this.onTodayClick();
+      this.classSelectionChanged = false;
+    }
   }
 
   onTodayClick = () => {
