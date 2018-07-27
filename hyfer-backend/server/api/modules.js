@@ -32,8 +32,6 @@ function compareModules(mod1, mod2) {
     mod1.module_name === mod2.module_name &&
     mod1.default_duration === mod2.default_duration &&
     mod1.sort_order === mod2.sort_order &&
-    mod1.git_url === mod2.git_url &&
-    mod1.git_owner === mod2.git_owner &&
     mod1.git_repo === mod2.git_repo &&
     mod1.color === mod2.color &&
     mod1.optional === mod2.optional &&

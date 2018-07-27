@@ -11,7 +11,7 @@ const GET_MODULE_QUERY = `SELECT *,
   FROM running_modules WHERE running_modules.module_id = modules.id) AS ref_count
   FROM modules`;
 
-const GET_HOMEWORK_MODULES_QUERY = `SELECT id, module_name AS name, default_duration AS duration, sort_order, git_url 
+const GET_HOMEWORK_MODULES_QUERY = `SELECT id, module_name AS name, default_duration AS duration, sort_order
   FROM modules
   WHERE sort_order != 1000 AND has_homework != 0
   ORDER BY sort_order`;
