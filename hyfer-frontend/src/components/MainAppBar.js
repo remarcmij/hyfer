@@ -44,22 +44,22 @@ const styles = (theme) => {
 
 const routes = {
   guest: [
-    { label: 'Timeline', path: 'timeline' },
-    { label: 'About', path: 'about' },
+    { label: 'Timeline', path: '/timeline' },
+    { label: 'About', path: '/about' },
   ],
   student: [
-    { label: 'Timeline', path: 'timeline' },
-    { label: 'Users', path: 'users' },
-    { label: 'Homework', path: 'homework' },
-    { label: 'About', path: 'about' },
+    { label: 'Timeline', path: '/timeline' },
+    { label: 'Users', path: '/users' },
+    { label: 'Homework', path: '/homework' },
+    { label: 'About', path: '/about' },
   ],
   teacher: [
-    { label: 'Timeline', path: 'timeline' },
-    { label: 'Modules', path: 'modules' },
-    { label: 'Users', path: 'users' },
-    { label: 'Homework', path: 'homework' },
+    { label: 'Timeline', path: '/timeline' },
+    { label: 'Modules', path: '/modules' },
+    { label: 'Users', path: '/users' },
+    { label: 'Homework', path: '/homework' },
     // { label: 'Train ticket', path: 'TrainTicket' },
-    { label: 'About', path: 'about' },
+    { label: 'About', path: '/about' },
   ],
 };
 
@@ -74,6 +74,18 @@ class MainAppBar extends Component {
   };
 
   role = 'guest';
+
+  componentDidMount() {
+    this.setRole();
+    const activeRoutes = routes[this.role];
+    const { pathname } = this.props.location;
+    for (let i = 0; i < activeRoutes.length; i++) {
+      if (activeRoutes[i].path === pathname) {
+        this.setState({ value: i });
+        break;
+      }
+    }
+  }
 
   handleChange = (event, value) => {
     this.setState({ value });
@@ -124,15 +136,21 @@ class MainAppBar extends Component {
     setTimeout(this.handleMenuClose, 250);
   }
 
+  setRole() {
+    const { isStudentOrTeacher, isTeacher } = this.props.currentUser;
+    const { showAdmin } = this.props.ui;
+    if (isStudentOrTeacher) {
+      this.role = (isTeacher && showAdmin) ? 'teacher' : 'student';
+    }
+  }
+
   render() {
     const { classes } = this.props;
     const { isLoggedIn, isStudentOrTeacher, isTeacher, userName, avatarUrl } = this.props.currentUser;
     const { showAdmin } = this.props.ui;
     const { value, anchorEl } = this.state;
 
-    if (isStudentOrTeacher) {
-      this.role = (isTeacher && showAdmin) ? 'teacher' : 'student';
-    }
+    this.setRole();
 
     return (
       <div className={classes.root}>
@@ -188,8 +206,9 @@ class MainAppBar extends Component {
 MainAppBar.wrappedComponent.propTypes = {
   classes: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
-  history: PropTypes.object,
   ui: PropTypes.object.isRequired,
+  history: PropTypes.object,
+  location: PropTypes.object,
 };
 
 export default withStyles(styles)(MainAppBar);
