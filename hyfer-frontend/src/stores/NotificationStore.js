@@ -9,7 +9,7 @@ export default class NotificationStore {
   reportError = ({ message }) => this.notification = { variant: 'error', message };
 
   @action
-  reportSuccess = (message) => this.notification = { variant: 'reportSuccess', message };
+  reportSuccess = (message) => this.notification = { variant: 'success', message };
 
   @action
   reportWarning = (message) => this.notification = { variant: 'warning', message };

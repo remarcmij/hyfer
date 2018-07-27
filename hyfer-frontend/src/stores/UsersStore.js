@@ -19,6 +19,7 @@ export default class UserStore {
   @observable
   assignedTeachers = [];
 
+  @observable
   users = [];
 
   @action
@@ -44,6 +45,11 @@ export default class UserStore {
     } catch (err) {
       stores.notification.reportError(err);
     }
+  }
+
+  @action
+  syncUsers(userName) {
+    return fetchJSON(`/api/githubSync/${userName}`, 'POST');
   }
 
   @action

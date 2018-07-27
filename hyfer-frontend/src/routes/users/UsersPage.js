@@ -1,76 +1,144 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from './users.css';
-import { UserList } from './UserList';
-import SynchronizeGithubData from './SynchronizeGithubData';
-import { inject, observer } from 'mobx-react';
+import { observer, inject } from 'mobx-react';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import FormLabel from '@material-ui/core/FormLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Paper from '@material-ui/core/Paper';
+import Select from '@material-ui/core/Select';
+import TextField from '@material-ui/core/TextField';
+import Toolbar from '@material-ui/core/Toolbar';
+import UserCard from '../../components/UserCard';
 
-@inject('users', 'currentUser')
+const styles = (theme) => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    backgroundColor: theme.palette.background.default,
+    margin: theme.spacing.unit,
+  },
+  toolbar: {
+    display: 'flex',
+  },
+  filler: {
+    flexGrow: 1,
+  },
+  formLabel: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+  },
+});
+
+@inject('users', 'currentUser', 'ui', 'notification')
 @observer
-export default class UsersPage extends React.Component {
-  state = {
-    selectedList: '',
-  };
+class UsersPage extends React.Component {
 
-  componentWillUnmount() {
-    this.props.users.resetUser();
+  state = {
+    category: 'active',
+    filter: '',
+    isSyncing: false,
   }
 
-  componentDidMount = () => {
-    this.props.users.loadUsers();
-    window.scrollTo(0, 0);
+  componentDidMount = async () => {
+    await this.props.users.loadUsers();
   };
 
-  handleFilterList = e => {
-    this.setState({
-      selectedList: e.target.value,
-    });
-  };
+  renderUsers() {
+    let { users } = this.props.users;
+    const { category, filter } = this.state;
 
-  renderSelectedList() {
-    const { selectedList } = this.state;
-    const roles = !selectedList ? ['guest', 'student', 'teacher'] : [selectedList];
+    switch (category) {
+      case 'active':
+        users = users.filter(user => user.archived === 0 || user.role === 'teacher');
+        break;
+      case 'teachers':
+        users = users.filter(user => user.role === 'teacher');
+        break;
+    }
 
-    return roles.map(role => {
-      return (
-        <ul key={role} className={styles.mainUl}>
-          <UserList role={role} />
-        </ul>
-      );
-    });
+    if (filter !== '') {
+      const regex = new RegExp(filter, 'i');
+      users = users.filter((user) => {
+        const { username, full_name } = user;
+        const email = user.email || '';
+        return username.match(regex) || full_name.match(regex) || email.match(regex);
+      });
+    }
+
+    return users.map(user => (
+      <UserCard
+        key={user.id}
+        user={user}
+      />
+    ));
+  }
+
+  handleCategoryChange = (e) => {
+    this.setState({ category: e.target.value });
+  }
+
+  handleFilterChange = (e) => {
+    this.setState({ filter: e.target.value.trim() });
+  }
+
+  handleSyncClick = async () => {
+    this.setState({ isSyncing: true });
+    try {
+      await this.props.users.syncUsers(this.props.currentUser.userName);
+      this.props.users.loadUsers();
+      this.props.notification.reportSuccess('Successfully synchronized');
+      this.setState({ isSyncing: false });
+    } catch (err) {
+      this.props.notification.reportError(err);
+      this.setState({ isSyncing: false });
+    }
   }
 
   render() {
+    const { classes } = this.props;
+    const { isTeacher } = this.props.currentUser;
+    const { showAdmin } = this.props.ui;
+
     return (
       <div>
-        <div className={styles.userSearchDiv}>
-          <input
-            className={styles.userSearchBox}
-            type="text"
-            placeholder="lookup someone"
-            onChange={this.props.users.searchUser}
-          />
-          <select
-            className={styles.listSelector}
-            value={this.state.selectedList}
-            onChange={e => {
-              this.handleFilterList(e);
-            }}
-          >
-            <option value="">All list</option>
-            <option value="guest">Guest</option>
-            <option value="teacher">Teachers</option>
-            <option value="student">Students</option>
-          </select>
-          {this.props.currentUser.isTeacher && <SynchronizeGithubData />}
+        <Paper className={classes.toolbarContainer} elevation={2}>
+          <Toolbar className={classes.toolbar}>
+            <FormLabel classes={{ root: classes.formLabel }}>Users:</FormLabel>
+            <Select
+              value={this.state.category}
+              onChange={this.handleCategoryChange}
+              MenuProps={{ PaperProps: { style: { transform: 'translate3d(0, 0, 0)' } } }}
+            >
+              <MenuItem value='all'>All</MenuItem>
+              <MenuItem value='active'>Current</MenuItem>
+              <MenuItem value='teachers'>Teachers</MenuItem>
+            </Select>
+            <FormLabel classes={{ root: classes.formLabel }}>Filter:</FormLabel>
+            <TextField value={this.state.filter} onChange={this.handleFilterChange} />
+            <span className={classes.filler} />
+            {showAdmin && isTeacher && (
+              <Button onClick={this.handleSyncClick} color="secondary" disabled={this.state.isSyncing}>
+                Sync users with Github
+              </Button>
+            )}
+          </Toolbar>
+        </Paper>
+
+        <div className={classes.container}>
+          {this.renderUsers()}
         </div>
-        <div>{this.renderSelectedList()}</div>
-      </div>
+      </div >
     );
   }
 }
 
 UsersPage.wrappedComponent.propTypes = {
+  classes: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
+  notification: PropTypes.object.isRequired,
+  ui: PropTypes.object.isRequired,
   users: PropTypes.object.isRequired,
 };
+
+export default withStyles(styles)(UsersPage);

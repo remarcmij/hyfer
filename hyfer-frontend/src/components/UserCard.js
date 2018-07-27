@@ -175,9 +175,9 @@ class UserCard extends React.Component {
 
 UserCard.wrappedComponent.propTypes = {
   classes: PropTypes.object.isRequired,
-  currentModule: PropTypes.object.isRequired,
-  currentUser: PropTypes.object.isRequired,
-  selectedWeek: PropTypes.number.isRequired,
+  currentModule: PropTypes.object,
+  currentUser: PropTypes.object,
+  selectedWeek: PropTypes.number,
   showAttendance: PropTypes.bool,
   showRemoveTeacher: PropTypes.bool,
   user: PropTypes.object.isRequired,
