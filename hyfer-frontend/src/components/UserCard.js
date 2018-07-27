@@ -81,7 +81,7 @@ class UserCard extends React.Component {
 
   handleGitHub = () => {
     const { user } = this.props;
-    window.open(`http://github.com/${user.username}`, '_blank');
+    window.open(`http://github.com/${user.username}?tab=repositories`, '_blank');
   };
 
   handleClickOpen = () => {
