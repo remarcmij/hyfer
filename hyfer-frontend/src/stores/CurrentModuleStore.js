@@ -1,6 +1,5 @@
 import { observable, action, runInAction } from 'mobx';
 import { fetchJSON } from './util';
-import Showdown from 'showdown';
 import stores from '.';
 import moment from "moment";
 
@@ -19,8 +18,6 @@ function normalizeHistory(duration, history) {
 }
 
 export default class CurrentModuleStore {
-
-  converter = new Showdown.Converter({ tables: true, simplifiedAutoLink: true });
 
   @observable
   readMe = null;
@@ -121,10 +118,9 @@ export default class CurrentModuleStore {
       const res = await fetch(`${HYF_GITHUB_URL}/${repoName}/readme`);
       if (!res.ok) throw res;
       const readmeEncoded = await res.json();
-      const readmeDecoded = atob(readmeEncoded.content);
-      const html = this.converter.makeHtml(readmeDecoded);
+      const markdown = atob(readmeEncoded.content);
       runInAction(() => {
-        this.readMe = { repoName, html };
+        this.readMe = { repoName, markdown };
       });
     } catch (err) {
       stores.notification.reportError(err);

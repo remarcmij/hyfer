@@ -5,9 +5,11 @@ import { observer, inject } from 'mobx-react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
+// import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 import Showdown from 'showdown';
 import ModuleNotesEditor from './ModuleNotesEditor';
+import GridContainer from '../../../components/GridContainer';
 import MarkdownViewer from '../../../components/MarkdownViewer';
 import '!style-loader!css-loader!github-markdown-css';
 
@@ -182,14 +184,12 @@ class ModuleNotes extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.root}>
-        <div className={classes.container}>
-          {inEditMode
-            ? this.renderEditMode()
-            : this.renderViewMode(classes)
-          }
-        </div>
-      </div>
+      <GridContainer className={classes.root}>
+        {inEditMode
+          ? this.renderEditMode()
+          : this.renderViewMode(classes)
+        }
+      </GridContainer>
     );
   }
 }

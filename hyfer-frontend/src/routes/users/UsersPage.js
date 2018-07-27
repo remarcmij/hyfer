@@ -5,7 +5,7 @@ import { UserList } from './UserList';
 import SynchronizeGithubData from './SynchronizeGithubData';
 import { inject, observer } from 'mobx-react';
 
-@inject('users')
+@inject('users', 'currentUser')
 @observer
 export default class UsersPage extends React.Component {
   state = {
@@ -62,7 +62,7 @@ export default class UsersPage extends React.Component {
             <option value="teacher">Teachers</option>
             <option value="student">Students</option>
           </select>
-          <SynchronizeGithubData />
+          {this.props.currentUser.isTeacher && <SynchronizeGithubData />}
         </div>
         <div>{this.renderSelectedList()}</div>
       </div>
@@ -71,5 +71,6 @@ export default class UsersPage extends React.Component {
 }
 
 UsersPage.wrappedComponent.propTypes = {
+  currentUser: PropTypes.object.isRequired,
   users: PropTypes.object.isRequired,
 };

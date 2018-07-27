@@ -6,12 +6,12 @@ import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
-import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
 import TextField from '@material-ui/core/TextField';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import GridContainer from './GridContainer';
 import MarkdownEditor from './MarkdownEditor';
 
 const styles = (theme) => ({
@@ -89,8 +89,8 @@ class ProfileEditDialog extends React.Component {
           </Toolbar>
         </AppBar>
         <DialogContent className={classes.content}>
-          <Grid container justify="center" spacing={24}>
-            <Grid item xs={12} sm={8} lg={6} xl={4}>
+          <GridContainer>
+            <React.Fragment>
               <TextField
                 autoFocus
                 margin="dense"
@@ -117,8 +117,8 @@ class ProfileEditDialog extends React.Component {
                 markdown={this.state.notes || ''}
                 onChange={this.onMarkdownChange}
               />
-            </Grid>
-          </Grid>
+            </React.Fragment>
+          </GridContainer>
         </DialogContent>
       </Dialog>
     );

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { inject, observer } from 'mobx-react';
-import Grid from '@material-ui/core/Grid';
+import GridContainer from '../../components/GridContainer';
 import MarkdownViewer from '../../components/MarkdownViewer';
 
 async function fetchText(path) {
@@ -30,11 +30,9 @@ export default class AboutPage extends React.Component {
     }
 
     return (
-      <Grid container justify="center" spacing={24}>
-        <Grid item xs={12} sm={8} lg={6} xl={4}>
-          <MarkdownViewer markdown={markdown} />
-        </Grid>
-      </Grid>
+      <GridContainer>
+        <MarkdownViewer markdown={markdown} />
+      </GridContainer>
     );
   }
 }

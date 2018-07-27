@@ -5,6 +5,8 @@ import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
+import GridContainer from '../../components/GridContainer';
+import MarkdownViewer from '../../components/MarkdownViewer';
 
 const HYF_GITHUB_URL = 'https://github.com/HackYourFuture';
 
@@ -21,16 +23,6 @@ const styles = (theme) => ({
   },
   icon: {
     marginLeft: theme.spacing.unit * 2,
-  },
-  markdownBody: {
-    boxSizing: 'border-box',
-    minWidth: 200,
-    maxWidth: 980,
-    margin: '0 auto',
-    padding: 45,
-    '@media(max-width: 767px)': {
-      padding: 15,
-    },
   },
 });
 
@@ -61,7 +53,9 @@ class ModuleReadMe extends Component {
             </a>
           </div>
         </div>
-        <article className={`${classes.markdownBody} markdown-body`} dangerouslySetInnerHTML={{ __html: readMe.html }} />
+        <GridContainer>
+          <MarkdownViewer markdown={readMe.markdown} />
+        </GridContainer>
       </React.Fragment>
     );
   }
