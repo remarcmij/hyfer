@@ -5,7 +5,6 @@ import { observer, inject } from 'mobx-react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import EditIcon from '@material-ui/icons/Edit';
-// import Grid from '@material-ui/core/Grid';
 import Tooltip from '@material-ui/core/Tooltip';
 import Showdown from 'showdown';
 import ModuleNotesEditor from './ModuleNotesEditor';

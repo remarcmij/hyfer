@@ -1,34 +1,31 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import ModuleItem from './ModuleItem';
-import style from './modules.css';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { inject, observer } from 'mobx-react';
+import { withStyles } from '@material-ui/core';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import ModuleItem from './ModuleItem';
+
+const styles = () => ({
+
+  draggableContent: {
+    width: 1,
+    overflow: 'visible',
+    margin: '1vh 0',
+  },
+  draggableItem: {
+    padding: 0,
+    margin: 0,
+    '&:focus': {
+      outline: 'none',
+    },
+  },
+});
 
 @inject('modulesStore')
 @observer
-export default class ModuleList extends Component {
+class ModuleList extends Component {
 
-  weekWidth = 1;
-
-  componentDidMount() {
-    this.props.modulesStore.getModules();
-    window.addEventListener('resize', this.computeWeekWidth);
-    this.computeWeekWidth();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.computeWeekWidth);
-  }
-
-  computeWeekWidth = () => {
-    const week_element = document.querySelector('.week_element');
-    if (week_element != null) {
-      this.weekWidth = week_element.clientWidth;
-    }
-  }
-
-  onDragEnd = (result) => {
+  handleDragEnd = (result) => {
     if (!result.destination) {
       return;
     }
@@ -40,37 +37,31 @@ export default class ModuleList extends Component {
   }
 
   render() {
+    const { classes } = this.props;
     const { modules } = this.props.modulesStore;
     return (
-      <DragDropContext onDragEnd={this.onDragEnd}>
+      <DragDropContext onDragEnd={this.handleDragEnd}>
         <Droppable droppableId="droppable">
           {provided => (
-            <div ref={provided.innerRef}>
+            <div ref={provided.innerRef} className={classes.draggable}>
               {modules.map((module, index) => (
                 <Draggable key={module.id} draggableId={module.id} index={index}>
                   {provided => (
-                    <div
-                      style={{
-                        width: '1px',
-                        overflow: 'visible',
-                        margin: '1vh 0',
-                      }}
-                    >
+                    <div className={classes.draggableContent}>
                       <div
-                        className={style.moduleList}
+                        className={classes.draggableItem}
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
                       >
                         <ModuleItem
                           module={module}
-                          weekWidth={this.weekWidth}
+                          weekWidth={this.props.weekWidth}
                         />
                       </div>
                       {provided.placeholder}
                     </div>
-                  )
-                  }
+                  )}
                 </Draggable>
               ))}
               {provided.placeholder}
@@ -83,5 +74,9 @@ export default class ModuleList extends Component {
 }
 
 ModuleList.wrappedComponent.propTypes = {
+  classes: PropTypes.object.isRequired,
   modulesStore: PropTypes.object.isRequired,
+  weekWidth: PropTypes.number.isRequired,
 };
+
+export default withStyles(styles)(ModuleList);

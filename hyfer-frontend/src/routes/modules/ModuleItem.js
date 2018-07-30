@@ -1,160 +1,173 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Resizable from 're-resizable';
-import style from './modules.css';
-import ModuleForm from './ModuleForm';
+import { withStyles } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Typography from '@material-ui/core/Typography';
+import EditModuleDialog from './EditModuleDialog';
+import ModuleMenu from './ModuleMenu';
 import { inject, observer } from 'mobx-react';
+
+const styles = (theme) => ({
+  moduleItem: {
+    // padding: '0.5em 0',
+    borderRadius: theme.shape.borderRadius,
+    boxShadow: theme.shadows[2],
+    color: 'white',
+  },
+  moduleItemContent: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  moduleName: {
+    color: 'white',
+    paddingRight: theme.spacing.unit,
+  },
+  menuButton: {
+    opacity: 0.25,
+    '&:hover': {
+      opacity: 1,
+    },
+    [`@media(max-width: ${theme.breakpoints.values.sm}px)`]: {
+      opacity: 1,
+    },
+  },
+});
+
+const resizableEnable = {
+  top: false,
+  right: true,
+  bottom: false,
+  left: false,
+  topRight: false,
+  bottomRight: false,
+  bottomLeft: false,
+  topLeft: false,
+};
+
+const maxWeeks = 6;
 
 @inject('modulesStore')
 @observer
-export default class ModuleItem extends Component {
+class ModuleItem extends Component {
   state = {
-    isMenuShow: false,
-    isEditing: false,
+    anchorEl: null,
+    dialogOpen: false,
   };
 
-  showMenu = () => {
-    this.setState({ isMenuShow: true });
-  };
+  componentDidMount() {
+    this.setState({ duration: this.props.module.default_duration });
+  }
 
-  hideMenu = () => {
-    this.setState({ isMenuShow: false });
-  };
-
-  editModule = () => {
+  handleMenuShowClick = (event) => {
     this.setState({
-      isMenuShow: false,
-      isEditing: true,
+      anchorEl: event.currentTarget,
+    });
+  }
+
+  handleMenuClose = () => {
+    this.setState({
+      anchorEl: null,
+    });
+  }
+
+  handleModuleEdit = () => {
+    this.setState({
+      menuOpen: false,
+      dialogOpen: true,
+    });
+  }
+
+  handleDialogClose = () => {
+    this.setState({
+      dialogOpen: false,
     });
   };
 
-  showAddModal = () => {
-    this.setState({ isEditing: true });
+  handleModuleUpdate = (module) => {
+    const newModules = this.props.modulesStore.modules.map(mod => mod.id === module.id ? module : { ...mod });
+    this.props.modulesStore.setModules(newModules);
   };
 
-  hideAddModal = () => {
-    this.setState({ isEditing: false });
-  };
-
-  deleteModule = () => {
+  handleModuleDelete = () => {
     this.props.modulesStore.deleteModule(this.props.module);
   };
 
-  updateModule = module => {
-    const curModulesArr = this.props.modulesStore.modules;
-    const newModulesArr = curModulesArr.map(a => {
-      if (a.id === module.id) {
-        return module;
-      } else {
-        return { ...a };
-      }
+  handleResizeStart = (event) => {
+    event.stopPropagation();
+  }
+
+  handleResizeStop = (event, direction, refToElement, delta) => {
+    const module = this.props.module;
+    const newDuration = module.default_duration + Math.round(delta.width / this.props.weekWidth);
+    const newModules = this.props.modulesStore.modules.map(mod => {
+      return mod.id === module.id
+        ? { ...module, default_duration: newDuration }
+        : mod;
     });
-    this.props.modulesStore.setModules(newModulesArr);
-  };
+    this.props.modulesStore.setModules(newModules);
+  }
 
   render() {
-    const module = this.props.module;
+    const { classes, module } = this.props;
     const moduleWidth = module.default_duration * this.props.weekWidth;
+
     return (
-      <div>
+      <React.Fragment>
         <Resizable
           style={{ backgroundColor: module.color }}
-          className={style.moduleItem}
-          handleStyles={{
-            right: {
-              width: '4px',
-              height: '80%',
-              top: '10%',
-              right: '0px',
-              cursor: 'ew-resize',
-              backgroundColor: 'gray',
-              opacity: '0.8',
-              borderRadius: '2px',
-            },
-          }}
+          className={classes.moduleItem}
           size={{ width: moduleWidth }}
-          enable={{
-            top: false,
-            right: true,
-            bottom: false,
-            left: false,
-            topRight: false,
-            bottomRight: false,
-            bottomLeft: false,
-            topLeft: false,
-          }}
+          enable={resizableEnable}
           grid={[this.props.weekWidth, 1]}
           minWidth={this.props.weekWidth}
-          maxWidth={this.props.weekWidth * 6}
-          onResizeStop={(e, direction, ref, d) => {
-            const newDuration = Math.round(d.width / this.props.weekWidth);
-            const modules = this.props.modulesStore.modules;
-            const newModules = modules.map(a => ({ ...a }));
-            for (const m of newModules) {
-              if (m.id === module.id) {
-                m.default_duration += newDuration;
-              }
-            }
-            this.props.modulesStore.setModules(newModules);
-          }}
-          onResizeStart={e => e.stopPropagation()}
+          maxWidth={this.props.weekWidth * maxWeeks}
+          onResizeStart={this.handleResizeStart}
+          onResizeStop={this.handleResizeStop}
         >
-          <div className={style.moduleItemContent}>
-            <md-icon class="material-icons" onClick={this.showMenu}>
-              more_vert
-            </md-icon>
-            {module.module_name}
-            {module.optional === 1 ? '*' : ''}
+          <div className={classes.moduleItemContent}>
+            <IconButton
+              onClick={this.handleMenuShowClick}
+              className={classes.menuButton}
+            >
+              <MoreVertIcon color="action" />
+            </IconButton>
+            <Typography
+              variant="subheading"
+              title={module.module_name}
+              className={classes.moduleName}
+              noWrap
+            >
+              {module.module_name}
+              {module.optional === 1 ? '*' : ''}
+            </Typography>
           </div>
-
-          <ul
-            onMouseDown={e => e.stopPropagation()}
-            className={style.moduleMenu}
-            style={{
-              visibility: this.state.isMenuShow ? 'visible' : 'hidden',
-              opacity: this.state.isMenuShow ? '1' : '0',
-            }}
-          >
-            <li>
-              <button style={{ color: '#3e43cc' }} onClick={this.editModule}>
-                <md-icon class="material-icons">edit</md-icon>
-                <span>Edit</span>
-              </button>
-            </li>
-            <li className={style.menuSep} />
-            <li>
-              <button
-                style={{ color: module.ref_count > 0 ? '' : '#FF5722' }}
-                disabled={module.ref_count > 0 ? true : false}
-                onClick={this.deleteModule}
-              >
-                <md-icon class="material-icons">delete</md-icon>
-                <span>Delete</span>
-              </button>
-            </li>
-          </ul>
-
-          <div
-            onMouseDown={this.hideMenu}
-            className={style.menuOverlay}
-            style={{ display: this.state.isMenuShow ? 'block' : 'none' }}
-          />
         </Resizable>
-        <ModuleForm
-          onCancel={this.hideAddModal}
-          onAdd={this.updateModule}
-          visible={this.state.isEditing}
-          title={'Update Module ' + this.props.module.module_name + '..'}
-          module={this.props.module}
-          actionName="UPDATE"
+        <ModuleMenu
+          module={module}
+          anchorEl={this.state.anchorEl}
+          onEdit={this.handleModuleEdit}
+          onDelete={this.handleModuleDelete}
+          onClose={this.handleMenuClose}
         />
-      </div>
+        <EditModuleDialog
+          module={module}
+          action="Update"
+          open={this.state.dialogOpen}
+          onClose={this.handleDialogClose}
+          onSave={this.handleModuleUpdate}
+        />
+      </React.Fragment>
     );
   }
 }
 
 ModuleItem.wrappedComponent.propTypes = {
+  classes: PropTypes.object.isRequired,
   module: PropTypes.object.isRequired,
   modulesStore: PropTypes.object.isRequired,
   weekWidth: PropTypes.number.isRequired,
 };
+
+export default withStyles(styles)(ModuleItem);

@@ -9,7 +9,7 @@ export default function GridContainer(props) {
   return (
     <div {...other}>
       <Grid container justify="center" spacing={24}>
-        <Grid item xs={12} sm={8} lg={6} xl={4}>
+        <Grid item xs={12} sm={10} lg={7} xl={5}>
           {children}
         </Grid>
       </Grid>
